@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Header from './components/Header';
+import SalesRepTeaser from './components/SalesRepTeaser';
 import { salesreps } from './data/data';
 
 class App extends Component {
@@ -11,6 +12,27 @@ class App extends Component {
     }
   }
 
+  addSale(id) {
+    let salesReps = this.state.salesReps;
+    const repPosition = salesReps.findIndex(salesRep => salesRep.id === id);
+    salesReps[repPosition].currentSales++;
+    salesReps.sort((a, b) => {return b.currentSales - a.currentSales});
+    this.setState({salesReps: salesReps});
+  }
+
+  removeSale(id) {
+    let salesReps = this.state.salesReps;
+    const repPosition = salesReps.findIndex(salesRep => salesRep.id === id);
+    salesReps[repPosition].currentSales--;
+    if(salesReps[repPosition].currentSales >= 0) {
+      salesReps.sort((a, b) => {return b.currentSales - a.currentSales});
+      this.setState({salesReps: salesReps});
+    } else {
+      return false;
+    }
+    
+  }
+
   render() {
     return (
       <div>
@@ -18,11 +40,15 @@ class App extends Component {
         <h2>Sales Rep List</h2>
         <ol>
           {salesreps.map(salesrep => (
-            <li key={salesrep.id}>
-              <h3>{salesrep.firstName} {salesrep.lastName}</h3>
-              <b>Email: </b> {salesrep.email} <br />
-              <b>Current Sales: </b> {salesrep.currentSales}
-            </li>
+            <SalesRepTeaser 
+              key={salesrep.id}
+              firstName={salesrep.firstName}
+              lastName={salesrep.lastName}
+              email={salesrep.email}
+              currentSales={salesrep.currentSales}
+              addSale={() => this.addSale(salesrep.id)}
+              removeSale={() => this.removeSale(salesrep.id)}
+            />
           ))}
         </ol>
       </div>
